@@ -1,0 +1,34 @@
+{
+ "ver": "0.1",
+ "info": {
+  "id": "Xc2GDy",
+  "date": "0",
+  "viewed": 0,
+  "name": "Digital interference hypno",
+  "description": "drippy hypno",
+  "likes": 0,
+  "published": "Private",
+  "usePreview": 0,
+  "tags": [
+   "hypno"
+  ],
+  "hasliked": 0,
+  "parentid": "",
+  "parentname": ""
+ },
+ "renderpass": [
+  {
+   "inputs": [],
+   "outputs": [
+    {
+     "id": "4dfGRr",
+     "channel": 0
+    }
+   ],
+   "code": "void mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    // Normalized pixel coordinates (from 0 to 1)\n    vec2 uv = (fragCoord * 2.0 - iResolution.xy) / (iResolution.y);\n\n   \n    float d = length(uv);\n    d = sin(d * 7. + iTime) / 10.;\n    d = abs(d);\n    \n    d = smoothstep(0.01,.2,d);\n    \n    d = 0.02 / d;\n    \n    //Creates a scrolling color pattern\n    vec3 col = tan(iTime+uv.yyy-vec3(0,2,1) + sin(uv.yyy * iTime * 20.2));    \n    \n    //Mix colors with b/w circle pattern\n    col*= d;\n\n    // Output to screen\n    fragColor = vec4(col,1.);\n}",
+   "name": "Image",
+   "description": "",
+   "type": "image"
+  }
+ ]
+}

@@ -1,0 +1,34 @@
+{
+ "ver": "0.1",
+ "info": {
+  "id": "XffXzS",
+  "date": "1705371273",
+  "viewed": 35,
+  "name": "Ancient Portal",
+  "description": "just messing around",
+  "likes": 2,
+  "published": "Public",
+  "usePreview": 0,
+  "tags": [
+   "psychedelic"
+  ],
+  "hasliked": 0,
+  "parentid": "",
+  "parentname": ""
+ },
+ "renderpass": [
+  {
+   "inputs": [],
+   "outputs": [
+    {
+     "id": "4dfGRr",
+     "channel": 0
+    }
+   ],
+   "code": "vec3 palette(float t){\n\n    vec3 a = vec3(0.361, -0.132, -0.218); \n    vec3 b = vec3(0.791, 0.555, 1.075); \n    vec3 c = vec3(5.147, 0.558, 0.485); \n    vec3 d = vec3(-0.943, 1.834, -1.465);\n    \n    //makes colors pulse inwards/outwards\n    c+= 555. * sin(5.55 * iTime) / 55555555.;\n    \n    return a + b*cos(6.28318*(c*t+d));;\n    \n    }\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    // Normalized pixel coordinates (from 0 to 1)\n    vec2 uv = (fragCoord * 2.0 - iResolution.xy) / (iResolution.y);\n    \n    //Keep track of original unit vector\n    vec2 uv0 = uv;\n\n    //Double unit vector before fract to center image\n    uv = fract(uv0 * 2.2) - 0.5;\n   \n    float d = length(uv);\n        \n    //Creates a scrolling color pattern\n    vec3 col = palette(length(uv0) + iTime * .333 + max(uv.y/2.,uv0.x) - min(uv.x/2.,uv0.y));\n    \n    d = sin(d*3. * (sin(d * iTime / .3) + 1.3) + iTime) / 9.;\n    d = abs(d);\n    \n    //using exponential function helps colors pop (brights get brighter, darks darker)\n    d = pow(0.015 / d, 3.);\n\n    //Mix colors with b/w circle pattern\n    col*= d;\n\n    // Output to screen\n    fragColor = vec4(col,1.);\n}\n\n",
+   "name": "Image",
+   "description": "",
+   "type": "image"
+  }
+ ]
+}
