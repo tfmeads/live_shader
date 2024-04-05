@@ -1,6 +1,6 @@
 uniform vec2 iResolution;
 uniform float iTime;
-uniform float cameraDist = 3.3;
+uniform float sphereDist = 1;
 uniform float timeFactor = 1; 
 uniform float clrFactor = 1;
 uniform float clrThreshold = .05;
@@ -36,13 +36,13 @@ float smin( float a, float b, float k )
 
 vec3 palette(float t){
 
-    vec3 a = vec3(0.821, 0.328, 0.242); 
-    vec3 b = vec3(0.659, 0.481, 0.896); 
-    vec3 c = vec3(-0.782, 1.000, 1.000); 
-    vec3 d = vec3(-2.752, 0.333, 0.667);
+    vec3 a = vec3(0.821 * clrFactor, 0.328, 0.242); 
+    vec3 b = vec3(0.659 * clrFactor, 0.481, 0.896); 
+    vec3 c = vec3(-0.782 * clrFactor, 1.000, 1.000); 
+    vec3 d = vec3(-2.752 * clrFactor, 0.333, 0.667);
     
     //makes colors flash
-    c+= timeFactor * 555. * sin(55.55 * iTime * flashSpeedFactor) / 555555.;
+    c+= timeFactor * 555.  * sin(55.55  * iTime) / 555555. * flashSpeedFactor;
     
     return a + b*cos(6.28318*(c*t+d));;
 
@@ -56,12 +56,10 @@ float map(vec3 p) {
     float y = 1.5 * cos(time * 2.);
     float x = .9 * 10. * (cos(time) / 3.);
     float z = sin(time);
-    float maxX = 1.;
+    float maxX = sphereDist;
     x = clamp(x,-maxX,maxX);
 
     vec3 spherePos = vec3(x,y,z);
-    
-    
     
     vec3 q = p;
     
@@ -83,7 +81,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = (fragCoord * 2. - iResolution.xy) / iResolution.y;
     
     // Initialization
-    vec3 ro = vec3(0, 0, -cameraDist);         // ray origin
+    vec3 ro = vec3(0, 0, -3.3);         // ray origin
     vec3 rd = normalize(vec3(uv, 1)); // ray direction
     vec3 col = vec3(0);               // final pixel color
 
@@ -106,7 +104,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     }
 
     // Coloring
-    col = palette(t*.00046 * clrFactor + float(i)* clrThreshold);
+    col = palette(t*.00046 + float(i)* clrThreshold);
     //col = vec3(t * .46);           // color based on distance
     fragColor = vec4(col, 2);
 }

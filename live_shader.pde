@@ -93,7 +93,12 @@ void drawBackground(){
   fill(0);
   rect(-100,-100,width * 1.3,width * 1.3);
   
+  try{
   resetShader();
+  }
+  catch(Exception e){
+    e.printStackTrace();
+  }
 
   popMatrix();
   
@@ -160,7 +165,7 @@ void handleCC(int cc){
     }
     
     if(cc == COLOR_1_CC){
-      float clrFactor = map(lastClr1CC,0,127,0.000001,1.5);
+      float clrFactor = map(lastClr1CC,0,127,1,15);
       currShader.set("clrFactor",clrFactor);
     }
   }
@@ -177,24 +182,24 @@ void handleCC(int cc){
     }
 
     if(cc == DIST_CC){
-      float dist = map(lastDistCC,0,127,1,30);
+      float dist = map(lastDistCC,0,127,.3,2.2);
       
       float progress = 0.3;
     
-      float cameraDist = lerp(lastDist,dist,progress);
+      float sphereDist = lerp(lastDist,dist,progress);
 
-      lastDist = cameraDist;
+      lastDist = sphereDist;
 
-      currShader.set("cameraDist",cameraDist);
+      currShader.set("sphereDist",sphereDist);
     }
 
     if(cc == SPEED_CC){
-      float flashSpeedFactor = map(lastSpeedCC,0,127,.1,10);
+      float flashSpeedFactor = map(lastSpeedCC,0,127,.1,30);
       currShader.set("flashSpeedFactor",flashSpeedFactor);
     }
     
     if(cc == COLOR_1_CC){
-      float clrFactor = map(lastClr1CC,0,127,0.0003,3000);
+      float clrFactor = map(lastClr1CC,0,127,.02,2);
       currShader.set("clrFactor",clrFactor);
     }    
     if(cc == COLOR_2_CC){
