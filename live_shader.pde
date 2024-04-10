@@ -3,16 +3,19 @@ import ddf.minim.analysis.*;
 import ddf.minim.ugens.*;
 import themidibus.*;
 import javax.sound.midi.MidiMessage; 
+import java.util.Arrays;
+
 
 
 boolean showDebug = false;
 
 //TODO load different CC numbers for different shaders
 int DIST_CC = 41;
-int SIZE_CC = 42;
-int COLOR_1_CC = 43;
+int SIZE_CC = 43;
+int Y1_CC = 42;
+int COLOR_1_CC = 51;
 int TIME_CC = 44;
-int COLOR_2_CC = 51;
+int COLOR_2_CC = 52;
 int SPEED_CC = 61;
 int TRIGGER_CUE = 14;
 
@@ -23,12 +26,14 @@ int lastSpeedCC = 5;
 int lastTimeCC = 33;
 int lastSizeCC = 16;
 int lastDistCC = 10;
+int lastY1CC = 63;
 
 float lastDist = 3.3;
 boolean cueNext = false;
 boolean autoCue = false;
 int CUE_INTERVAL = 250;
 HashMap<Integer,Integer> cueMap;
+ArrayList<Integer> alwaysCueCCs = new ArrayList();
 
 MidiBus myBus;
 
@@ -57,6 +62,8 @@ void setup(){
     println("Loaded " + shaderNames[i]);
   }
   
+  //alwaysCueCCs.add(TIME_CC);
+  
   setShader(0);
   
   MidiBus.list();
@@ -67,10 +74,10 @@ void setup(){
  
   cueMap = new HashMap();
     
-  frameRate(120);
+  frameRate(90);
   noStroke();
   
-  surface.setLocation(0 , displayHeight / 2);
+  surface.setLocation(-16 , -16);
 }
 
 void draw(){
@@ -205,6 +212,10 @@ void handleCC(int cc){
     if(cc == COLOR_2_CC){
       float clrThreshold = map(lastClr2CC,0,127,0.05,.5);
       currShader.set("clrThreshold",clrThreshold);
+    }    
+    if(cc == Y1_CC){
+      float sphereY = map(lastY1CC,0,127,0.5,2.2);
+      currShader.set("sphereY",sphereY);
     }
   }
 }
@@ -231,8 +242,11 @@ void controllerChange(int channel, int number, int value) {
   if(number == DIST_CC){
     lastDistCC = value;
   }
+  if(number == Y1_CC){
+    lastY1CC = value;
+  }
   
-  if(autoCue || cueNext){
+  if(autoCue || cueNext || alwaysCueCCs.contains(number)){
 
     int time = millis();
     cueMap.put(number,time);
@@ -245,11 +259,12 @@ void controllerChange(int channel, int number, int value) {
 
               if(millis() - lastTime > CUE_INTERVAL){
                   handleCC(number);
+                  cueNext = false;
               }
               println(number + " " + time);
             }
         }, 
-        CUE_INTERVAL 
+        CUE_INTERVAL + 20 
   );
   }
   else{

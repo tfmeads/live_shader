@@ -1,6 +1,7 @@
 uniform vec2 iResolution;
 uniform float iTime;
 uniform float sphereDist = 1;
+uniform float sphereY = 1.5;
 uniform float timeFactor = 1; 
 uniform float clrFactor = 1;
 uniform float clrThreshold = .05;
@@ -53,7 +54,7 @@ float map(vec3 p) {
 
     float time = iTime * timeFactor;
 
-    float y = 1.5 * cos(time * 2.);
+    float y = sphereY * cos(time * 2.);
     float x = .9 * 10. * (cos(time) / 3.);
     float z = sin(time);
     float maxX = sphereDist;
